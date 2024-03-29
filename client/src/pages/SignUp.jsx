@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function SignUp() {
 
   const [formData, setFormData] = useState({});
-  const [formError, setFormError] = useState({});
+  const [formError, setFormError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -16,25 +17,31 @@ export default function SignUp() {
   };
 
   const handleSubmit = async e => {
-    setIsLoading(true);
     e.preventDefault();
-    const res = await fetch('/api/auth/signup', 
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/auth/signup', 
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
 
-    if(data.success === false){
-      setFormError(data.message);
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(false);
-    console.log(data)
+      if(data.success === false){
+        setFormError(data.message);
+        setIsLoading(false);
+        return;
+      }
+        setIsLoading(false);
+        setFormError(null);
+        navigate("/signin")
+      } catch (error) {
+        setIsLoading(false);
+        setFormError(error.message)
+      }
   }
 
   return (
@@ -58,6 +65,7 @@ export default function SignUp() {
           <span className='text-blue-700'>Sign In</span>
         </Link>
       </div>
+      {formError && <p className="text-red-500 mt-5">{formError}</p>}
     </div>
   )
 }
