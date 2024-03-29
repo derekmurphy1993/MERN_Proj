@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 export default function SignUp() {
 
   const [formData, setFormData] = useState({});
+  const [formError, setFormError] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -14,6 +16,7 @@ export default function SignUp() {
   };
 
   const handleSubmit = async e => {
+    setIsLoading(true);
     e.preventDefault();
     const res = await fetch('/api/auth/signup', 
     {
@@ -24,6 +27,13 @@ export default function SignUp() {
       body: JSON.stringify(formData),
     });
     const data = await res.json();
+
+    if(data.success === false){
+      setFormError(data.message);
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(false);
     console.log(data)
   }
 
@@ -37,9 +47,9 @@ export default function SignUp() {
         className='border p-3 rounded-lg' id="email" onChange={handleChange} />
         <input type="password" placeholder='password'
         className='border p-3 rounded-lg' id="password" onChange={handleChange} />
-        <button className="bg-slate-700 text-white p-3 
+        <button disabled={isLoading} className="bg-slate-700 text-white p-3 
         rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Sign Up
+          {isLoading ? "Loading..." : "Sign Up"}
         </button>
       </form>
       <div className='flex gap-2 mt-5'>
