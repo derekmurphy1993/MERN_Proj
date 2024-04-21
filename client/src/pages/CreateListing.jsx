@@ -116,7 +116,7 @@ export default function CreateListing() {
 
             setLoading(true);
             setError(false);
-            const res = await fetch('/api/listing/create', {
+            const res = await fetch('/api/listings/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +129,7 @@ export default function CreateListing() {
             const data = await res.json();
             setLoading(false);
             if (data.success === false){ setError(data.message) }
-            navigate(`/listing/${data._id}`)
+            navigate(`/listings/${data._id}`)
 
         } catch (error) {
             setError(error.message);
@@ -170,7 +170,7 @@ export default function CreateListing() {
                 <p> Beds </p>
             </div>
             <div className='flex items-center gap-2'>
-                <input className='p-3 border border-gray-300 rounded-lg' type='number' id='baths' min='1' max='5' 
+                <input className='p-3 border border-gray-300 rounded-lg' type='number' id='bathrooms' min='1' max='5' 
                     required onChange={handleChange} value={formData.bathrooms} />
                 <p> Baths </p>
             </div>
