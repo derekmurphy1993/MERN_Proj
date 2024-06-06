@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ListingItem from '../components/ListingItem';
 
 export default function Search() {
     const navigate = useNavigate();
@@ -17,7 +18,6 @@ export default function Search() {
     const [listings, setListings] = useState([]);
 
     useEffect(() => {
-
         const urlParams = new URLSearchParams(location.search);
         const searchTermFromUrl = urlParams.get('searchTerm');
         const typeFromUrl = urlParams.get('type');
@@ -27,9 +27,13 @@ export default function Search() {
         const sortFromUrl = urlParams.get('sort');
         const orderFromUrl = urlParams.get('order');
 
-        if ( searchTermFromUrl || typeFromUrl ||
-            parkingFromUrl || furnishedFromUrl ||
-            offerFromUrl || sortFromUrl || orderFromUrl
+        if ( searchTermFromUrl ||
+            typeFromUrl ||
+            parkingFromUrl ||
+            furnishedFromUrl ||
+            offerFromUrl ||
+            sortFromUrl ||
+            orderFromUrl
         ) {
             setSideBarData({
                 searchTerm: searchTermFromUrl || '',
@@ -50,12 +54,10 @@ export default function Search() {
             const data = await res.json();
             setListings(data);
             setLoading(false);
-            console.log(listings);
         }
-
+        console.log(listings)
         fetchListings();
-
-    }, [location.search])
+    }, [location.search]);
 
     const handleChange = (e) => {
         if (e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sale') {
@@ -80,17 +82,17 @@ export default function Search() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const urlParams = new URLSearchParams()
-        urlParams.set('searchTerm', sideBarData.searchTerm)
-        urlParams.set('type', sideBarData.type)
-        urlParams.set('parking', sideBarData.parking)
-        urlParams.set('furnished', sideBarData.furnished)
-        urlParams.set('offer', sideBarData.offer)
-        urlParams.set('sort', sideBarData.sort)
-        urlParams.set('order', sideBarData.order)
+        const urlParams = new URLSearchParams();
+        urlParams.set('searchTerm', sideBarData.searchTerm);
+        urlParams.set('type', sideBarData.type);
+        urlParams.set('parking', sideBarData.parking);
+        urlParams.set('furnished', sideBarData.furnished);
+        urlParams.set('offer', sideBarData.offer);
+        urlParams.set('sort', sideBarData.sort);
+        urlParams.set('order', sideBarData.order);
         const searchQuery = urlParams.toString();
 
-        navigate(`/search?${searchQuery}`)
+        navigate(`/search?${searchQuery}`);
 
     }
 
@@ -166,8 +168,23 @@ export default function Search() {
             </form>
         </div>
 
-        <div className=''>
+        <div className='flex-1'>
             <h1 className='text-3xl font-semibold border-b mt-5 p-3 text-slate-700'>Listing Results:</h1>
+            <div className='p-7 flex flex-wrap gap-4'>
+                {!loading && listings.length === 0 && (
+                    <p className='text-xl text-slate-700'> No Listings Found</p>
+                )}
+                {loading && (
+                    <p className='text-xl text-slate-700 text-center'></p>
+                )}
+
+            { !loading &&
+            listings &&
+            listings.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
+            ))}
+
+            </div>
         </div>
     </div>
   )
